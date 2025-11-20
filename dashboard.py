@@ -16,7 +16,18 @@ if "messages" not in st.session_state:
 # 3. Configuration Sidebar
 with st.sidebar:
     st.header("Configuration")
-    api_key = st.text_input("Enter your Groq API Key:", type="password")
+    
+    # Option 1: Check if the key is in Streamlit Secrets (Hidden for users)
+    if "GROQ_API_KEY" in st.secrets:
+        api_key = st.secrets["GROQ_API_KEY"]
+        st.success("✅ API Key loaded securely from the cloud.")
+    
+    # Option 2: If no secret is found, ask the user to enter it
+    else:
+        api_key = st.text_input("Enter your Groq API Key:", type="password")
+        if not api_key:
+            st.warning("⚠️ Please enter an API Key to proceed.")
+
     st.markdown("---")
     uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
     
@@ -89,4 +100,5 @@ if uploaded_file is not None and api_key:
 elif uploaded_file is not None and not api_key:
     st.warning("Please enter your Groq API Key in the sidebar.")
 else:
+
     st.info("Please upload a CSV file to begin.")
